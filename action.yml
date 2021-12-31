@@ -1,0 +1,18 @@
+name: Markdown Sections
+author: Amir Kadivar <amir@amirkdv.ca>
+description: Break down a markdown doc into sections separated by headings
+
+inputs:
+  file:
+    description: Path to a markdown file
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.file }}
+
+branding:
+  icon: book-open
+  color: blue

@@ -1,0 +1,4 @@
+beautifulsoup4
+commonmark
+flake8
+pytest
