@@ -110,6 +110,21 @@ class PullRequest:
 
         return None
 
+    def check_change_md_file(self) -> Optional[str]:
+        for changed_file in self.pr.get_files():
+            match = re.match(r'changes/\d+-(\w*).md', changed_file.filename)
+            if not match:
+                continue
+
+            username = match.groups()[0]
+            try:
+                user = self.gh.get_user(username)
+                return None
+            except GithubException:
+                continue
+
+        return f"Add a change description file `change/[number]-[user].md` describing the change."
+
     def check_all(self) -> List[str]:
         log("Running PR checks")
         responses = [
@@ -117,6 +132,7 @@ class PullRequest:
             self.check_change_summary(),
             self.check_related_issue_ref(),
             self.check_checklist(),
+            self.check_change_md_file(),
         ]
         return [e for e in responses if e]
 
