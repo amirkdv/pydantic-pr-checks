@@ -122,7 +122,7 @@ class PullRequest:
             if author == self.pr.user.login:
                 return None
 
-        return f"Add a change description file `change/[number]-[author].md` describing the change."
+        return "Add a change description file `change/[number]-[author].md` describing the change."
 
     def check_all(self) -> List[str]:
         log("Running PR checks")
@@ -135,7 +135,7 @@ class PullRequest:
         ]
         return [e for e in responses if e]
 
-    def check(self, output: str='print') -> int:
+    def check(self, output: str = 'print') -> int:
         """Runs all checks and acts if there are any failing checks. Returns 0
         if no errors and 1 otherwise."""
         assert output in ['print', 'comment']

@@ -37,9 +37,9 @@ if __name__ == '__main__':
     # for ease of use with Github Actions, all Github-related arguments are
     # consumed from enviornment variables instead of CLI args.
     parser = argparse.ArgumentParser(description="Run pydantic PR checks.")
-    parser.add_argument('--output',
-        default="print",
-        help="What to do with errors: 'print' writes to stdout, 'comment' posts on Github PR"
+    parser.add_argument(
+        '--output', default='print',
+        help="What to do with errors: 'print' writes to stdout, 'comment' posts on Github PR."
     )
     args = parser.parse_args()
 

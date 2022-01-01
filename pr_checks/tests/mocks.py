@@ -11,10 +11,10 @@ class MockObject(object):
 
 
 def mock_pr(
-    author: str='user',
-    title: str='Title',
-    body: str='## Change Summary\n\n## Related issue number\n\n## Checklist',
-    files: List[str]=['changes/123-user.md']
+    author: str = 'user',
+    title: str = 'Title',
+    body: str = '## Change Summary\n\n## Related issue number\n\n## Checklist',
+    files: List[str] = ['changes/123-user.md']
 ) -> PullRequest:
     pr = MockObject(
         body=body,
