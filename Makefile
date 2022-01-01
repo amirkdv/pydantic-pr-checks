@@ -17,7 +17,6 @@ docker-build:
 docker-test: docker-build
 	docker run -it $(IMAGE):$(VERSION) sh -c "pip install pytest && pytest -v"
 
-docker-push: docker-test
+docker-publish: docker-test
 	@echo $(VERSION) | grep -q dirty && { echo "refusing to push a dirty tag!"; exit 1; } || true
-	docker tag $(IMAGE):$(VERSION) $(IMAGE):latest
-	docker push $(IMAGE):latest
+	docker push $(IMAGE):$(VERSION)

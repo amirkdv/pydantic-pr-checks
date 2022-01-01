@@ -8,7 +8,7 @@ A Github Action for enforcing PR guidelines, primarily for [pydantic].
 
 To use this action:
 
-```yml
+```yaml
 on:
   pull_request:
     types: [opened, reopened, edited]
@@ -18,12 +18,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: docker://amirkdv/pydantic-pr-checks:latest
+      - uses: amirkdv/pydantic-pr-checks@v1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ github.repository }}
           number: ${{ github.event.number }}
 ```
+
+Alternatively, for better performance, you can use the pre-built Docker image
+published on [dockerhub]:
+
+```yaml
+steps:
+  - uses: docker://amirkdv/pydantic-pr-checks:v1.0
+    with:
+      token: ${{ secrets.GITHUB_TOKEN }}
+      repo: ${{ github.repository }}
+      number: ${{ github.event.number }}
+```
+
+[dockerhub]: https://hub.docker.com/repository/docker/amirkdv/pydantic-pr-checks/
 
 ## Checks
 
@@ -32,29 +46,42 @@ jobs:
 3. A `Related issue number` section exists, referencing an issue with a proper
    linking verb like "fixes".
 4. A `Checklist` section exists and all tasks in it are complete.
+5. A `changes/[number]-[user].md` file is included, briefly describing the change.
 
 ## Development
 
-Getting started:
+To get started:
+
 ```sh
 (venv) $ make install
 (venv) $ make test
 (venv) $ make lint
 ```
 
-Testing the main script:
+If you want to directly debug the main script:
 ```
 (venv) $ INPUT_TOKEN=... INPUT_REPO=... INPUT_NUMBER=... ./main.py
 ```
 
-**Note**: this will post a comment as the owner of the access token on the given
-pull request if there are any failing checks!
+**Note**: To avoid mistakes, the `main.py` script prints failing checks to
+stdout instead of posting a Github comment. To post a comment, use:
 
-Building and deploying docker image:
 ```sh
-# assumes the latest tag is locally present
-$ make build
-$ make push
+(venv) $ main.py --action comment
+```
+
+### Docker
+
+Docker is only used to speed up the usage in Github actions. You do not need
+docker for normal development and testing.
+
+Docker image workflow:
+
+```sh
+# assumes the latest tag is locally present, if not: git pull --tags
+$ make docker-build
+$ make docker-test
+$ make docker-publish
 ```
 
 ## How it Works
