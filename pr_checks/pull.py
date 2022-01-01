@@ -1,10 +1,18 @@
 import re
+import sys
 from typing import List, Optional
+from datetime import datetime
 
-from github import Github
+from github import Github, GithubException
 from bs4 import BeautifulSoup
 
 from .markdown import MarkdownDocument
+
+
+def log(msg: str):
+    t = datetime.now().strftime('[%Y-%b-%d %H:%M:%S] ')
+    sys.stderr.write(t + msg + '\n')
+    sys.stderr.flush()
 
 
 class MissingSection(Exception):
@@ -15,12 +23,15 @@ class PullRequest:
     """A Github Pull Request. The main job of this class is to implement the PR
     check logic:
 
-        check_X():  runs a specific check, returns an error string if any.
-        check():    runs all check_X() checks and returns a list of errors.
+        check_X():   runs a specific check, returns an error string if any.
+        check_all(): runs all check_X() checks and returns a list of errors.
+        check():     runs all checks and acts on them: print to stdout or comment on PR
     """
 
     def __init__(self, gh: Github, repo: str, number: int):
-        self.repo = gh.get_repo(repo)
+        self.gh = gh
+        log(f"Loading PR {number} for repository {repo}")
+        self.repo = self.gh.get_repo(repo)
         self.pr = self.repo.get_pull(number)
         self.body = MarkdownDocument(self.pr.body)
         self.sections = self.body.sections_by_title()
@@ -99,7 +110,8 @@ class PullRequest:
 
         return None
 
-    def check(self) -> List[str]:
+    def check_all(self) -> List[str]:
+        log("Running PR checks")
         responses = [
             self.check_ids_in_title(),
             self.check_change_summary(),
@@ -108,16 +120,25 @@ class PullRequest:
         ]
         return [e for e in responses if e]
 
-    def check_and_comment(self) -> int:
-        """Runs all checks and comments on the PR if there are any errors.
-        Returns 0 if no errors and 1 otherwise."""
-        errors = self.check()
+    def check(self, output: str='print') -> int:
+        """Runs all checks and acts if there are any failing checks. Returns 0
+        if no errors and 1 otherwise."""
+        assert output in ['print', 'comment']
+
+        errors = self.check_all()
         if not errors:
+            log('All good! Nothing to do.')
             return 0
 
-        comment = "Thank you for opening a pull request! " \
+        msg = "Thank you for opening a pull request! " \
             "Before assigning it for review, please fix the following issue(s):\n\n"
-        comment += '- ' + '\n- '.join(errors)
+        msg += '- ' + '\n- '.join(errors)
 
-        # the endpoint for creating comments on issues and PRs is the same
-        self.pr.create_issue_comment(comment)
+        if output == 'print':
+            print(msg)
+        else:
+            # the endpoint for creating comments on issues and PRs is the same
+            log(f"Found {len(errors)} error(s), posting comment ...")
+            self.pr.create_issue_comment(msg)
+
+        return 1

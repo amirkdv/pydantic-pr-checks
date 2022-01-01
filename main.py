@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 import sys
-from pr_checks.pull import PullRequest
+import argparse
 
 from github import Github
 from pydantic import BaseSettings, SecretStr, ValidationError
 
+from pr_checks.pull import PullRequest
 
-class ActionArgs(BaseSettings):
+
+class ActionInputs(BaseSettings):
     repo: str
     number: int
     token: SecretStr
@@ -17,19 +19,28 @@ class ActionArgs(BaseSettings):
         case_sensitive = False
 
 
-def main() -> int:
-    # for ease of use with Github Actions all arguments are consumed from
-    # enviornment variables instead of CLI args.
+def main(args: argparse.Namespace) -> int:
+    assert args.output in ['print', 'comment']
+
     try:
-        args = ActionArgs()
+        inputs = ActionInputs()
     except ValidationError as e:
-        print(f"error loading Settings:\n{e}")
+        print(f"Error loading arguments:\n{e}")
         return 1
 
-    gh = Github(args.token.get_secret_value())
-    pr = PullRequest(gh=gh, repo=args.repo, number=args.number)
-    return pr.check_and_comment()
+    gh = Github(inputs.token.get_secret_value())
+    pr = PullRequest(gh=gh, repo=inputs.repo, number=inputs.number)
+    return pr.check(output=args.output)
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    # for ease of use with Github Actions, all Github-related arguments are
+    # consumed from enviornment variables instead of CLI args.
+    parser = argparse.ArgumentParser(description="Run pydantic PR checks.")
+    parser.add_argument('--output',
+        default="print",
+        help="What to do with errors: 'print' writes to stdout, 'comment' posts on Github PR"
+    )
+    args = parser.parse_args()
+
+    sys.exit(main(args))
