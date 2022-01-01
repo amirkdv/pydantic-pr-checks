@@ -1,29 +1,10 @@
 import pytest
 from ..markdown import MarkdownDocument
-
-
-def deindent(string):
-    lines = string.split('\n')
-
-    indentation = -1
-    for line in lines:
-        if not line:
-            continue
-        indentation = len(line) - len(line.lstrip(' '))
-        break
-
-    assert indentation >= 0
-
-    out = ''
-    for line in lines:
-        assert not line or line[:indentation] == ' ' * indentation, f"Unexpected indentation: {line}"
-        out += '\n' + line[indentation:]
-
-    return out
+from textwrap import dedent
 
 
 def run(string):
-    md = MarkdownDocument(deindent(string))
+    md = MarkdownDocument(dedent(string))
     sections = md.sections_by_title()
     return {
         # str(e) produces the HTML markup for the element
