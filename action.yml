@@ -1,18 +1,22 @@
-name: Markdown Sections
+name: Pydantic PR Checks
 author: Amir Kadivar <amir@amirkdv.ca>
-description: Break down a markdown doc into sections separated by headings
+description: Checks PR guidelines and comments on errors
 
 inputs:
-  file:
-    description: Path to a markdown file
+  repo:
+    description: The Github repository in 'user/project' format
+    required: true
+  number:
+    description: The PR number in the given repository
+    required: true
+  token:
+    description: Github access token to view and comment on a PR
     required: true
 
 runs:
   using: docker
   image: Dockerfile
-  args:
-    - ${{ inputs.file }}
 
 branding:
-  icon: book-open
+  icon: check-square
   color: blue

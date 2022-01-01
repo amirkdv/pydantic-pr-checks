@@ -1,12 +1,6 @@
-VENV=venv
-PIP=$(VENV)/bin/pip
-
-$(VENV):
-	python3 -m venv $(VENV)
-	$(PIP) install -r requirements.txt
-
-requirements.txt:
-	$(PIP) freeze | sort > $@
+install:
+	pip install -U -r requirements.txt
+	pip install flake8 pytest
 
 lint:
 	flake8
@@ -14,3 +8,6 @@ lint:
 test:
 	@python --version
 	pytest -v
+
+build:
+	docker build -t markdown-sections .

@@ -1,4 +1,4 @@
-beautifulsoup4
+PyGithub
 commonmark
-flake8
-pytest
+beautifulsoup4
+pydantic==1.9.0

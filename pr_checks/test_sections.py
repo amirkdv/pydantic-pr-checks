@@ -1,5 +1,5 @@
 import pytest
-from sections import MarkdownDocument
+from .markdown import MarkdownDocument
 
 
 def deindent(string):
@@ -24,9 +24,11 @@ def deindent(string):
 
 def run(string):
     md = MarkdownDocument(deindent(string))
+    sections = md.sections_by_title()
     return {
-        title: body.strip()
-        for title, body in md.sections_by_title().items()
+        # str(e) produces the HTML markup for the element
+        title: ''.join(str(e) for e in body).strip()
+        for title, body in sections.items()
     }
 
 

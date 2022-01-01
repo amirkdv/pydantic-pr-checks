@@ -1,13 +1,22 @@
-# Markdown Sections
+# Pydantic PR Checks
 
-You want to enforce structure on markdown strings, eg PR or issue bodies? This
-is a library and Github Action that helps you reason about the semantic
-structure of markdown strings. This helps you answer questions like:
+A Github Action for enforcing PR guidelines, primarily for [pydantic].
 
-* Does it contain a section titled `Steps to Reproduce` or `Summary of Changes`?
-* Are all the tasks in `Merge Checklist` marked as complete?
+[pydantic](https://github.com/samuelcolvin/pydantic)
 
-## Sections
+## Quick Start
+
+To use this action:
+
+TODO
+
+## Checks
+
+TODO
+
+## How it Works
+
+### Sections
 
 The key concept here is sections. They represent a semantic piece of the
 document tree represented by a markdown string. A section is identified by a
@@ -30,29 +39,13 @@ More things.
 ```
 The `Summary` section contains two elements: a `<p>` and a `<ul>`.
 
-## How it Works
-
-1. Markdown is parsed into HTML using [commonmark.py].
-2. HTML is traversed using [beautifulsoup] to identify sections.
-3. Output is all sections in HTML identified by their title.
-
-[commonmark.py]: https://pypi.org/project/commonmark/
-[beautifulsoup]: https://pypi.org/project/beautifulsoup4/
-
-## Limitations
+### Limitations
 
 Sections as defined above have no awareness of the nesting relationships among
 themselves. In the example above, the fact that the `Details` section is a child
-of `Summary` section is lost. The output of markdown-sections is simply:
+of `Summary` section is lost.
 
-```json
-{
-  "Summary": "<p> Body </p> <ul> <li> some </li> <li> list </li> </ul>",
-  "Details": "<p> More things </p>"
-}
-```
-
-## Why not Regular Expressions?
+### Why not Regular Expressions?
 
 It's tempting to use regular expressions as a quick and dirty hack to identify
 important pieces from a markdown string. Maybe markdown feels more amenable to
