@@ -1,5 +1,5 @@
 import pytest
-from .markdown import MarkdownDocument
+from ..markdown import MarkdownDocument
 
 
 def deindent(string):
