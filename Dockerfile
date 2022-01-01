@@ -12,4 +12,4 @@ COPY pr_checks/ pr_checks/
 COPY main.py .
 COPY action.yml .
 
-CMD ["python3", "/app/main.py"]
+CMD ["python3", "/app/main.py", "--output=comment"]
