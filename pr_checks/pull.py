@@ -29,13 +29,13 @@ class PullRequest:
         """Checks that PR title does not include references to issues."""
         match = re.search(r'#\d+', self.pr.title)
         if match:
-            return f"PR titles shouldn't contain issue IDs, found: '{match.group()}'."
+            return f"PR titles shouldn't contain issue IDs, found: `{match.group()}`."
 
         return None
 
     def section_by_title(self, title: str) -> List[BeautifulSoup]:
         if title not in self.sections:
-            raise MissingSection(f"PR body should have a section titled '{title}'.")
+            raise MissingSection(f"PR body should have a section titled `{title}`.")
 
         return self.sections[title]
 
@@ -77,7 +77,7 @@ class PullRequest:
         verb, issue_id = match.groups()
         if verb.lower() not in valid_issue_ref_verbs:
             # includes #N without a valid linking verb
-            return f"Issue refs should use valid linking verbs like 'fixes #{issue_id}' not '{match.group()}'."
+            return f"Issue refs should use valid linking verbs like `fixes #{issue_id}` not `{match.group()}`."
 
         return None
 
@@ -115,7 +115,7 @@ class PullRequest:
         if not errors:
             return 0
 
-        comment = "Thank you for opening a Pull Request!\n\n" \
+        comment = "Thank you for opening a pull request! " \
             "Before assigning it for review, please fix the following issue(s):\n\n"
         comment += '- ' + '\n- '.join(errors)
 

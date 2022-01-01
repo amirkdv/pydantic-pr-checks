@@ -27,7 +27,11 @@ jobs:
 
 ## Checks
 
-ToDo
+1. PR title does not reference issue IDs
+2. A `Change Summary` section exists.
+3. A `Related issue number` section exists, referencing an issue with a proper
+   linking verb like "fixes".
+4. A `Checklist` section exists and all tasks in it are complete.
 
 ## Development
 
