@@ -3,7 +3,7 @@ import sys
 from typing import List, Optional
 from datetime import datetime
 
-from github import Github, GithubException
+from github import Github
 from bs4 import BeautifulSoup
 
 from .markdown import MarkdownDocument
@@ -110,20 +110,19 @@ class PullRequest:
 
         return None
 
-    def check_change_md_file(self) -> Optional[str]:
+    def check_changes_md_file(self) -> Optional[str]:
+        """Checks that there is a file `changes/[number]-[author].md` matching
+        the PR's author handle."""
         for changed_file in self.pr.get_files():
             match = re.match(r'changes/\d+-(\w*).md', changed_file.filename)
             if not match:
                 continue
 
-            username = match.groups()[0]
-            try:
-                user = self.gh.get_user(username)
+            author = match.groups()[0]
+            if author == self.pr.user.login:
                 return None
-            except GithubException:
-                continue
 
-        return f"Add a change description file `change/[number]-[user].md` describing the change."
+        return f"Add a change description file `change/[number]-[author].md` describing the change."
 
     def check_all(self) -> List[str]:
         log("Running PR checks")
@@ -132,7 +131,7 @@ class PullRequest:
             self.check_change_summary(),
             self.check_related_issue_ref(),
             self.check_checklist(),
-            self.check_change_md_file(),
+            self.check_changes_md_file(),
         ]
         return [e for e in responses if e]
 
