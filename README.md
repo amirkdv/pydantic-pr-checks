@@ -2,17 +2,56 @@
 
 A Github Action for enforcing PR guidelines, primarily for [pydantic].
 
-[pydantic](https://github.com/samuelcolvin/pydantic)
+[pydantic]: https://github.com/samuelcolvin/pydantic
 
 ## Quick Start
 
 To use this action:
 
-TODO
+```yml
+on:
+  pull_request:
+    types: [opened, reopened, edited]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: docker://amirkdv/pydantic-pr-checks:latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          number: ${{ github.event.number }}
+```
 
 ## Checks
 
-TODO
+ToDo
+
+## Development
+
+Getting started:
+```sh
+(venv) $ make install
+(venv) $ make test
+(venv) $ make lint
+```
+
+Testing the main script:
+```
+(venv) $ INPUT_TOKEN=... INPUT_REPO=... INPUT_NUMBER=... ./main.py
+```
+
+**Note**: this will post a comment as the owner of the access token on the given
+pull request if there are any failing checks!
+
+Building and deploying docker image:
+```sh
+# assumes the latest tag is locally present
+$ make build
+$ make push
+```
 
 ## How it Works
 
